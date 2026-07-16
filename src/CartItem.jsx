@@ -77,7 +77,7 @@ function CartItem({ onContinueShopping }) {
       </div>
 
       <div className="cart-actions">
-        <button className="continue-shopping-btn" onClick={handleContinueShopping}>
+        <button className="continue-shopping-btn" onClick={onContinueShopping}>
           Continue Shopping
         </button>
         <button className="checkout-btn" onClick={handleCheckoutShopping}>
