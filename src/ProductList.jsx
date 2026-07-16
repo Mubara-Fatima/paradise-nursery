@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice';
+import CartItem from './CartItem';
 import './ProductList.css';
 
-const plantsData = [
+const plantsArray = [
   {
     category: 'Air Purifying Plants',
     plants: [
@@ -40,17 +41,30 @@ const plantsData = [
 ];
 
 function ProductList() {
+  const [showCart, setShowCart] = useState(false);
+  const [addedToCart, setAddedToCart] = useState({});
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
-  const [addedItems, setAddedItems] = useState({});
-  const [showCart, setShowCart] = useState(false);
-
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleCartClick = (e) => {
+    e.preventDefault();
+    setShowCart(true);
+  };
+
+  const handleContinueShopping = (e) => {
+    if (e) e.preventDefault();
+    setShowCart(false);
+  };
 
   const handleAddToCart = (plant) => {
     dispatch(addItem(plant));
-    setAddedItems(prev => ({ ...prev, [plant.name]: true }));
+    setAddedToCart(prev => ({ ...prev, [plant.name]: true }));
   };
+
+  if (showCart) {
+    return <CartItem onContinueShopping={handleContinueShopping} />;
+  }
 
   return (
     <div className="product-list-container">
@@ -59,14 +73,12 @@ function ProductList() {
         <div className="nav-links">
           <a href="/">Home</a>
           <a href="#plants">Plants</a>
-          <a href="#cart" onClick={() => setShowCart(true)}>
-            Cart ({totalQuantity})
-          </a>
+          <a href="#" onClick={handleCartClick}>Cart ({totalQuantity})</a>
         </div>
       </nav>
 
       <div className="products-section" id="plants">
-        {plantsData.map((categoryItem) => (
+        {plantsArray.map((categoryItem) => (
           <div key={categoryItem.category} className="category-section">
             <h2>{categoryItem.category}</h2>
             <div className="plants-grid">
@@ -77,10 +89,10 @@ function ProductList() {
                   <p>{plant.cost}</p>
                   <button
                     className="add-to-cart-btn"
-                    disabled={addedItems[plant.name]}
+                    disabled={addedToCart[plant.name]}
                     onClick={() => handleAddToCart(plant)}
                   >
-                    {addedItems[plant.name] ? 'Added' : 'Add to Cart'}
+                    {addedToCart[plant.name] ? 'Added' : 'Add to Cart'}
                   </button>
                 </div>
               ))}
